@@ -1,7 +1,7 @@
 import express, { Application } from 'express'
 import { ApplicationController } from './controllers/app.controller'
 import { PersonController } from './controllers/person.controller'
-import { MONGO_URL } from './constants/api.constants';
+import { MONGO_URI } from './constant/environment.constant'
 import mongoose from 'mongoose'
 import bodyParser from 'body-parser'
 import cors from 'cors'
@@ -27,9 +27,11 @@ class App {
 
   private setMongoConfig() {
     mongoose.Promise = global.Promise;
-    mongoose.connect(MONGO_URL, {
-      useNewUrlParser: true
-    });
+    mongoose.connect(MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    })
+    console.log('MongoDB running on: ' + MONGO_URI)
   }
 }
 

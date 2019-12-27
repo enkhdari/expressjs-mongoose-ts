@@ -1,10 +1,14 @@
-import mongoose from 'mongoose';
+import mongoose from 'mongoose'
+
+export const NAME = 'Person'
 
 const PersonSchema = new mongoose.Schema({
   email: { type: String, required: true },
-  age: Number,
-  firstName: String,
-  lastName: String
+  name: String,
+  phone: String,
+  createdAt: Date,
+  createdBy: mongoose.Types.ObjectId,
+  updatedAt: Date
 })
 
-export const Person = mongoose.model('Person', PersonSchema);
+export default mongoose.model(NAME, PersonSchema, NAME.toLowerCase())
