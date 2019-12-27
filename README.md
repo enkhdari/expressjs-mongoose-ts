@@ -1,2 +1,2 @@
 # expressjs-mongoose-ts
-NodeJS, MongoDB, TypeScript, REST - Starter Seed Project
+NodeJS, TS.ED, MongoDB, TypeScript, JWT, REST - Starter Seed Project
