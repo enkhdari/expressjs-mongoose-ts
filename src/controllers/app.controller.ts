@@ -1,15 +1,23 @@
-import { Application, Request, Response } from 'express'
+import * as Express from 'express'
+import { Controller, Get, Authenticated } from '@tsed/common'
 
+@Controller('/')
 export class ApplicationController {
-  constructor(private app: Application) {
-    this.routes()
+
+  @Get('/')
+  async hello(request: Express.Request, response: Express.Response) {
+    return { id: request.params.id, name: 'Hello World!' };
   }
 
-  public routes() {
-    this.app.route('/').get((req: Request, res: Response) => {
-      res.status(200).send({
-        message: 'Go to /person'
-      })
-    })
+  @Get('/profile')
+  @Authenticated()
+  async profile(request: Express.Request, response: Express.Response) {
+    return { id: request.params.id, name: 'Hello World!' };
+  }
+
+  @Get('/admin')
+  @Authenticated({ role: 'admin' })
+  async admin(request: Express.Request, response: Express.Response) {
+    return { id: request.params.id, name: 'Hello Admin!' };
   }
 }

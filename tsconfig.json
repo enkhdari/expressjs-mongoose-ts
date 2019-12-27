@@ -4,10 +4,18 @@
     "module": "commonjs",
     "outDir": "./dist",
     "resolveJsonModule": true,
-    "strict": true,
+    "strict": false,
     "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "experimentalDecorators":true,
+    "emitDecoratorMetadata": true,
+    "lib": ["es6"],
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "declaration": false,
+    "typeRoots": [
+      "./typings",
+      "./node_modules/@types"
+    ],
   },                         
   "exclude": ["node_modules"], 
   "include": ["src/**/*.ts", "src/*.ts"]

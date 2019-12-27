@@ -1,10 +1,8 @@
-import app from './app'
 import path from 'path'
 import mongoose from 'mongoose'
 import fs from 'fs'
 
 require('dotenv').config({ path: path.resolve(__dirname, `../environment/${process.env.NODE_ENV}.env`)})
-import { MONGO_URI } from './constant/environment.constant'
 
 const models = fs.readdirSync('./src/models').filter(file => {
   return removeExtensionFromFile(file)
@@ -13,11 +11,11 @@ const models = fs.readdirSync('./src/models').filter(file => {
 function initMongo() {
   try {
     mongoose.Promise = global.Promise
-    mongoose.connect(MONGO_URI, {
+    mongoose.connect(process.env.MONGO_URI, {
       useUnifiedTopology: true,
       useNewUrlParser: true
     })
-    console.log('Connected to: ' + MONGO_URI)
+    console.log('Connected to: ' + process.env.MONGO_URI)
   } catch (err) {
     console.log(err)
     process.exit(0)
@@ -30,7 +28,7 @@ function removeExtensionFromFile(filename: string) {
 
 function deleteModelFromDB(modelName: any) {
   return new Promise((resolve, reject) => {
-    const model = require(`./models/${modelName}`).default
+    const model = require(`../src/models/${modelName}`).default
     console.log(model)
     model.deleteMany({}, (err: Error, row: any) => {
       if (err) {

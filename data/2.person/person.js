@@ -11,5 +11,14 @@ module.exports = [
     birthDate: faker.date.past(),
     createdAt: faker.date.past(),
     updatedAt: faker.date.recent()
+  },
+  {
+    country: faker.address.country(),
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    phone: faker.phone.phoneNumber(),
+    birthDate: faker.date.past(),
+    createdAt: faker.date.past(),
+    updatedAt: faker.date.recent()
   }
 ]
