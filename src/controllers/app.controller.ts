@@ -5,19 +5,19 @@ import { Controller, Get, Authenticated } from '@tsed/common'
 export class ApplicationController {
 
   @Get('/')
-  async hello(request: Express.Request, response: Express.Response) {
-    return { id: request.params.id, name: 'Hello World!' };
+  async hello() {
+    return { name: 'Hello World!' };
   }
 
-  @Get('/profile')
-  @Authenticated()
-  async profile(request: Express.Request, response: Express.Response) {
-    return { id: request.params.id, name: 'Hello World!' };
+  @Get('/user')
+  @Authenticated({ role: 'user' })
+  async profile() {
+    return { name: 'Hello User!' };
   }
 
   @Get('/admin')
   @Authenticated({ role: 'admin' })
-  async admin(request: Express.Request, response: Express.Response) {
-    return { id: request.params.id, name: 'Hello Admin!' };
+  async admin() {
+    return { name: 'Hello Admin!' };
   }
 }

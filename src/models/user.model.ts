@@ -1,14 +1,31 @@
-import mongoose from 'mongoose'
+import { Enum, Required, Property } from '@tsed/common'
+import { Ref, Model } from '@tsed/mongoose'
+import { BaseModel } from './base.model'
+import { Person } from './person.model';
 
-export const NAME = 'User'
+enum Roles {
+  ADMIN = 'ADMIN',
+  USER = 'USER'
+}
 
-const UserSchema = new mongoose.Schema({
-  role: { type: String, required: true },
-  email: { type: String, required: true },
-  password: { type: String, required: true },
-  infoId: { type: mongoose.Types.ObjectId, ref: 'Person' },
-  createdAt: Date,
-  updatedAt: Date
-})
+@Model({ collection: 'user' })
+export class User extends BaseModel {
+  @Property()
+  _id: string
 
-export default mongoose.model(NAME, UserSchema, NAME.toLowerCase())
+  @Required()
+  @Property()
+  email: string
+
+  @Enum(Roles)
+  @Property()
+  role: Roles
+
+  @Required()
+  @Property()
+  password: string
+
+  @Ref(Person)
+  @Property()
+  personId: Ref<Person>
+}

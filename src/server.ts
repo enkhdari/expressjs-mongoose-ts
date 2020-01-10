@@ -1,14 +1,13 @@
 import path from 'path'
-import mongoose from 'mongoose'
 import bodyParser from 'body-parser'
 import cors from 'cors'
-const session = require('express-session')
 import { $log, ServerLoader, ServerSettings } from '@tsed/common'
+import '@tsed/mongoose'
 
 require('dotenv').config({ path: path.resolve(__dirname, `../environment/${process.env.NODE_ENV}.env`)})
 
+// const session = require('express-session')
 const ROOT_DIR = path.resolve(__dirname)
-
 @ServerSettings({
   rootDir: ROOT_DIR,
   port: process.env.PORT,
@@ -16,6 +15,14 @@ const ROOT_DIR = path.resolve(__dirname)
     '/': `${ROOT_DIR}/controllers/**/*.ts`
   },
   passport: {},
+  mongoose: {
+    url: process.env.MONGO_URI,
+    connectionOptions: {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    }
+  },
+  debug: false, // process.env.NODE_ENV === 'development'
   acceptMimes: ['application/json']
 })
 export class Server extends ServerLoader {
@@ -27,25 +34,15 @@ export class Server extends ServerLoader {
       .use(cors())
       .use(bodyParser.json({ limit: '50mb' }))
       .use(bodyParser.urlencoded({ limit: '50mb', extended:true}))
-      .use(session({
-        secret: process.env.JWT_SECRET,
-        resave: true,
-        saveUninitialized: true,
-        maxAge: process.env.JWT_EXPIRATION,
-        cookie: {}
-      }))
+      // .use(session({
+      //   secret: process.env.JWT_SECRET,
+      //   resave: true,
+      //   saveUninitialized: true,
+      //   maxAge: process.env.JWT_EXPIRATION,
+      //   cookie: {}
+      // }))
 
-    this.setMongoConfig()
     return
-  }
-
-  private setMongoConfig() {
-    mongoose.Promise = global.Promise;
-    mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    })
-    $log.debug('MongoDB initialized on ' + process.env.MONGO_URI)
   }
 }
 

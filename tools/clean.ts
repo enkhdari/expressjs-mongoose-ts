@@ -5,14 +5,14 @@ import fs from 'fs'
 require('dotenv').config({ path: path.resolve(__dirname, `../environment/${process.env.NODE_ENV}.env`)})
 
 function getModelName(name) {
-  return name.split('.').length === 3 ? name.split('.')[0] : null
+  return name.split('.')[0]
 }
 
 async function clean() {
   try {
     for (const name of fs.readdirSync('./src/models')) {
       const model = getModelName(name)
-      if (model) {
+      if (model && model !== 'base' ) {
         if (mongoose.connection.db.collection(model)) {
           await mongoose.connection.db.collection(model).deleteMany({})
         }

@@ -7,7 +7,7 @@ module.exports = [
     role: 'admin',
     email: 'admin@admin.com',
     password: '$2a$05$2KOSBnbb0r.0TmMrvefbluTOB735rF/KRZb4pmda4PdvU9iDvUB26',
-    infoId: new ObjectID('5e0579529430ea01c83c0381'),
+    personId: new ObjectID('5e0579529430ea01c83c0381'),
     createdAt: faker.date.past(),
     updatedAt: faker.date.recent()
   }

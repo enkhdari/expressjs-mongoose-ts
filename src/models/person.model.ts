@@ -1,14 +1,31 @@
-import mongoose from 'mongoose'
+import { Required, Property } from '@tsed/common'
+import { Model, ObjectID } from '@tsed/mongoose'
+import { BaseModel } from './base.model'
 
-export const NAME = 'Person'
+@Model({ collection: 'person' })
+export class Person extends BaseModel {
+  @ObjectID()
+  @Property()
+  _id: string
 
-const PersonSchema = new mongoose.Schema({
-  email: { type: String, required: true },
-  name: String,
-  phone: String,
-  createdAt: Date,
-  createdBy: mongoose.Types.ObjectId,
-  updatedAt: Date
-})
+  @Property()
+  email: string
 
-export default mongoose.model(NAME, PersonSchema, NAME.toLowerCase())
+  @Property()
+  country: string
+
+  @Property()
+  firstName: string
+
+  @Property()
+  lastName: string
+
+  @Property()
+  phone: string
+
+  @Property()
+  birthDate: string
+
+  @Property()
+  name: string
+}

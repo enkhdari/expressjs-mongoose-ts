@@ -1,28 +1,35 @@
-import * as Express from 'express'
-import { Controller, Get, Post, Delete } from '@tsed/common'
+import { Controller, Get, Post, Delete, BodyParams, PathParams, QueryParams, Inject } from '@tsed/common'
 import { PersonService } from '../services/person.service'
+import { Person } from '../models/person.model'
+import { BaseController } from './base.controller'
 import CustomError from '../interfaces/error'
 
 const END_POINT = '/person'
 
 @Controller('/')
-export class PersonController {
-
-  constructor(private readonly personService: PersonService) {}
+export class PersonController extends BaseController {
+  @Inject() personService: PersonService
 
   @Get(END_POINT)
-  async get(request: Express.Request, response: Express.Response) {
-    return await this.personService.get(request.query)
+  async list(@QueryParams() query: any) {
+    return await this.personService.list(query)
   }
 
   @Post(END_POINT)
-  async upsert(request: Express.Request, response: Express.Response) {
-    return { success: await this.personService.upsert(request.body) }
+  async upsert(@BodyParams() person: Person) {
+    const data = await this.personService.upsert(person)
+    return this.returnData(data)
   }
 
-  @Delete(END_POINT)
-  async delete(request: Express.Request, response: Express.Response) {
-    if (!request.query._id) throw new CustomError('_id required')
-    return { success: await this.personService.delete(request.query._id) }
+  @Get(END_POINT + '/:id')
+  async get(@PathParams('id') id: string) {
+    const data = await this.personService.get(id)
+    return this.returnData(data)
+  }
+
+  @Delete(END_POINT + '/:id')
+  async delete(@PathParams('id') id: string) {
+    const result = await this.personService.delete(id)
+    return this.returnSuccess(result)
   }
 }
