@@ -1,51 +1,23 @@
 import path from 'path'
-import mongoose from 'mongoose'
+const mongoose = require('mongoose')
 import fs from 'fs'
 
 require('dotenv').config({ path: path.resolve(__dirname, `../environment/${process.env.NODE_ENV}.env`)})
 
-const models = fs.readdirSync('./src/models').filter(file => {
-  return removeExtensionFromFile(file)
-})
-
-function initMongo() {
-  try {
-    mongoose.Promise = global.Promise
-    mongoose.connect(process.env.MONGO_URI, {
-      useUnifiedTopology: true,
-      useNewUrlParser: true
-    })
-    console.log('Connected to: ' + process.env.MONGO_URI)
-  } catch (err) {
-    console.log(err)
-    process.exit(0)
-  }
-}
-
-function removeExtensionFromFile(filename: string) {
-  return filename.split('.').slice(0, -1).join('.').toString()
-}
-
-function deleteModelFromDB(modelName: any) {
-  return new Promise((resolve, reject) => {
-    const model = require(`../src/models/${modelName}`).default
-    console.log(model)
-    model.deleteMany({}, (err: Error, row: any) => {
-      if (err) {
-        reject(err)
-      } else {
-        resolve(row)
-      }
-    })
-  })
+function getModelName(name) {
+  return name.split('.').length === 3 ? name.split('.')[0] : null
 }
 
 async function clean() {
   try {
-    const promiseArray = models.map(
-      async model => await deleteModelFromDB(model)
-    )
-    await Promise.all(promiseArray)
+    for (const name of fs.readdirSync('./src/models')) {
+      const model = getModelName(name)
+      if (model) {
+        if (mongoose.connection.db.collection(model)) {
+          await mongoose.connection.db.collection(model).deleteMany({})
+        }
+      }
+    }
     console.log('Cleanup complete!')
     process.exit(0)
   } catch (err) {
@@ -54,5 +26,8 @@ async function clean() {
   }
 }
 
-initMongo()
-clean()
+mongoose.connect(process.env.MONGO_URI, { useUnifiedTopology: true, useNewUrlParser: true })
+mongoose.connection.once('open', async () => {
+  console.log('Connected to: ' + process.env.MONGO_URI)
+  clean()
+})
