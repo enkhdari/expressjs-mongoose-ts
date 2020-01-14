@@ -9,9 +9,9 @@ export class BaseService {
     return await this.model.find(query)
   }
   
-  async get(query: any) : Promise<any> {
+  async get(query: any, populate: string = '') : Promise<any> {
     query['deleted.at'] = { $exists: false }
-    return await this.model.findOne(query).exec()
+    return await this.model.findOne(query).populate(populate).exec()
   }
 
   async upsert(data: any) : Promise<any> {
@@ -19,7 +19,6 @@ export class BaseService {
       await this.model.findByIdAndUpdate(data._id,{ $set: data }, { new: false })
     } else {
       const newData =  await this.model.create(data)
-      console.log(newData)
       return newData
     }
     return data

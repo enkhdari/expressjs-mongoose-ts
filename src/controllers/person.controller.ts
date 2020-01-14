@@ -4,30 +4,29 @@ import { Person } from '../models/person.model'
 import { BaseController } from './base.controller'
 import CustomError from '../interfaces/error'
 
-const END_POINT = '/person'
 
-@Controller('/')
+@Controller('/person')
 export class PersonController extends BaseController {
   @Inject() personService: PersonService
 
-  @Get(END_POINT)
+  @Get()
   async list(@QueryParams() query: any) {
     return await this.personService.list(query)
   }
 
-  @Post(END_POINT)
+  @Post()
   async upsert(@BodyParams() person: Person) {
     const data = await this.personService.upsert(person)
     return this.returnData(data)
   }
 
-  @Get(END_POINT + '/:id')
+  @Get('/:id')
   async get(@PathParams('id') id: string) {
     const data = await this.personService.get(id)
     return this.returnData(data)
   }
 
-  @Delete(END_POINT + '/:id')
+  @Delete('/:id')
   async delete(@PathParams('id') id: string) {
     const result = await this.personService.delete(id)
     return this.returnSuccess(result)

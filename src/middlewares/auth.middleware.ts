@@ -1,23 +1,25 @@
-import { EndpointInfo, Next, OverrideMiddleware, AuthenticatedMiddleware, Middleware, IMiddleware , Req, Request } from '@tsed/common'
-import { Forbidden, Unauthorized } from 'ts-httpexceptions'
+import { EndpointInfo, Next, OverrideMiddleware, AuthenticatedMiddleware, IMiddleware , Req, Inject, $log } from '@tsed/common'
 import CustomError from '../interfaces/error'
 import * as Express from 'express'
-import * as Passport from 'passport'
-import { $log } from 'ts-log-debug'
+import { AuthService } from '../services/auth.service';
 
 @OverrideMiddleware(AuthenticatedMiddleware)
 export class AuthMiddleware implements IMiddleware  {
+  @Inject() authService: AuthService
 
-  public use(@Req() request: Express.Request, @EndpointInfo() endpoint: EndpointInfo, @Next() next: Express.NextFunction) {
+  public async use(@Req() request: Express.Request, @EndpointInfo() endpoint: EndpointInfo, @Next() next: Express.NextFunction) {
     const options = endpoint.get(AuthenticatedMiddleware) || {}
-    // Passport.authenticate('jwt', async function(err, val) {
-    //   $log.info(err, val)
-    // })
-    if(!request.isAuthenticated()) {
+    
+    let auth = { isAuthenticated: false, user: null }
+    try {
+      auth = await this.authService.validateJWT(request.headers.authorization)
+    } catch(error) {
+      throw new CustomError(error, false, 401)
+    }
+    if(!auth.isAuthenticated) {
       throw new CustomError('Unauthorized', false, 401)
     }
-
-    if (options.role && request.user.role !== options.role) {
+    if (options && options.role && auth.user.role !== options.role) {
       throw new CustomError('Forbidden', false, 403)
     }
     next()

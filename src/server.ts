@@ -14,7 +14,6 @@ const ROOT_DIR = path.resolve(__dirname)
   mount: {
     '/': `${ROOT_DIR}/controllers/**/*.ts`
   },
-  passport: {},
   mongoose: {
     url: process.env.MONGO_URI,
     connectionOptions: {
